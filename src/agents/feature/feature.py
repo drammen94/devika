@@ -66,8 +66,12 @@ class Feature:
         project_name = project_name.lower().replace(" ", "-")
 
         for file in response:
-            file_path = f"{self.project_dir}/{project_name}/{file['file']}"
-            file_path_dir = file_path[:file_path.rfind("/")]
+            # Ensure the file path does not duplicate the project directory
+            if not file['file'].startswith(self.project_dir):
+                file_path = os.path.join(self.project_dir, project_name, file['file'])
+            else:
+                file_path = file['file']
+            file_path_dir = os.path.dirname(file_path)
             os.makedirs(file_path_dir, exist_ok=True)
 
             with open(file_path, "w") as f:
